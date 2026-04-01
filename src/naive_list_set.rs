@@ -1,20 +1,20 @@
 use crate::ResourceSet;
 
 #[derive(Clone, PartialEq, Debug)]
-pub struct NaiveListSet<T> {
-    inner: Vec<T>,
+pub struct NaiveListSet {
+    inner: Vec<u32>,
 }
 
-impl<T: Clone + PartialEq + std::fmt::Debug + std::fmt::Display> ResourceSet<T> for NaiveListSet<T> {
+impl ResourceSet for NaiveListSet {
     fn new() -> Self {
         NaiveListSet { inner: Vec::new() }
     }
 
-    fn singleton(e: T) -> Self {
+    fn singleton(e: u32) -> Self {
         NaiveListSet { inner: vec![e] }
     }
 
-    fn contains(&self, elem: T) -> bool {
+    fn contains(&self, elem: u32) -> bool {
         self.inner.contains(&elem)
     }
 
@@ -52,10 +52,9 @@ impl<T: Clone + PartialEq + std::fmt::Debug + std::fmt::Display> ResourceSet<T> 
         NaiveListSet { inner: result }
     }
 
-    fn iter(&self) -> Box<dyn Iterator<Item = &T> + '_> {
-        // need to sort
-        let mut sorted: Vec<_> = self.inner.iter().collect();
-        sorted.sort_by(|a, b| format!("{:?}", a).cmp(&format!("{:?}", b)));
+    fn iter(&self) -> Box<dyn Iterator<Item = u32> + '_> {
+        let mut sorted = self.inner.clone();
+        sorted.sort();
         Box::new(sorted.into_iter())
     }
 }

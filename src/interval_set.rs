@@ -12,18 +12,19 @@ impl ResourceSet for IntervalSet {
     }
 
     fn singleton(e: u32) -> Self {
-        IntervalSet { inner: BTreeSet::from([(e, e)])
+        IntervalSet { inner: BTreeSet::from([(e, e)]) }
     }
 
     fn contains(&self, elem: u32) -> bool {
-        self.inner.range(..=(n, u32::MAX))
+        self.inner.range(..=(elem, u32::MAX))
             .next_back()
-            .map(|(start, end)| n >= *start && n <= *end)
+            .map(|(start, end)| elem >= *start && elem <= *end)
             .unwrap_or(false)
     }
 
     fn len(&self) -> usize {
-        self.inner.len()
+        self.inner.iter().map(|(start, end)| (end - start + 1) as usize).sum()
+    
     }
 
     fn union(&self, other: &Self) -> Self {
@@ -38,9 +39,7 @@ impl ResourceSet for IntervalSet {
         IntervalSet { inner: self.inner.difference(&other.inner).cloned().collect() }
     }
 
-    fn iter(&self) -> Box<dyn Iterator<Item = &u32> + '_> {
-        let mut sorted: Vec<_> = self.inner.iter().collect();
-        sorted.sort_by(|a, b| format!("{:?}", a).cmp(&format!("{:?}", b)));
-        Box::new(sorted.into_iter())
+    fn iter(&self) -> Box<dyn Iterator<Item = u32> + '_> {
+        Box::new(self.inner.iter().flat_map(|(start, end)| (*start..=*end).into_iter()))
     }
 }

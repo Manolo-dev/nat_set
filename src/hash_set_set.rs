@@ -2,20 +2,20 @@ use crate::ResourceSet;
 use std::collections::HashSet;
 
 #[derive(Clone, PartialEq, Debug)]
-pub struct HashSetSet<T: std::hash::Hash + Eq> {
-    inner: HashSet<T>,
+pub struct HashSetSet {
+    inner: HashSet<u32>,
 }
 
-impl<T: Eq + std::hash::Hash + Clone + PartialEq + std::fmt::Debug + std::fmt::Display> ResourceSet<T> for HashSetSet<T> {
+impl ResourceSet for HashSetSet {
     fn new() -> Self {
         HashSetSet { inner: HashSet::new() }
     }
 
-    fn singleton(e: T) -> Self {
+    fn singleton(e: u32) -> Self {
         HashSetSet { inner: HashSet::from([e]) }
     }
 
-    fn contains(&self, elem: T) -> bool {
+    fn contains(&self, elem: u32) -> bool {
         self.inner.contains(&elem)
     }
 
@@ -35,9 +35,9 @@ impl<T: Eq + std::hash::Hash + Clone + PartialEq + std::fmt::Debug + std::fmt::D
         HashSetSet { inner: self.inner.difference(&other.inner).cloned().collect() }
     }
 
-    fn iter(&self) -> Box<dyn Iterator<Item = &T> + '_> {
-        let mut sorted: Vec<_> = self.inner.iter().collect();
-        sorted.sort_by(|a, b| format!("{:?}", a).cmp(&format!("{:?}", b)));
+    fn iter(&self) -> Box<dyn Iterator<Item = u32> + '_> {
+        let mut sorted: Vec<u32> = self.inner.iter().cloned().collect();
+        sorted.sort();  // tri numérique
         Box::new(sorted.into_iter())
     }
 }

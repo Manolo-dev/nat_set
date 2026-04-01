@@ -1,16 +1,17 @@
 pub mod naive_list_set;
 pub mod hash_set_set;
+pub mod interval_set;
 
-pub trait ResourceSet<T: std::fmt::Display> {
+pub trait ResourceSet {
     fn new() -> Self;
-    fn singleton(e: T) -> Self;
-    fn contains(&self, elem: T) -> bool;
+    fn singleton(e: u32) -> Self;
+    fn contains(&self, elem: u32) -> bool;
     fn len(&self) -> usize;
     fn is_empty(&self) -> bool { self.len() == 0 }
     fn union(&self, other: &Self) -> Self;
     fn intersection(&self, other: &Self) -> Self;
     fn difference(&self, other: &Self) -> Self;
-    fn iter(&self) -> Box<dyn Iterator<Item = &T> + '_>;
+    fn iter(&self) -> Box<dyn Iterator<Item = u32> + '_>;
     fn serialize(&self) -> String {
         String::from("") + &self.iter().map(|e| format!("{}", e)).collect::<Vec<_>>().join(", ") + ""
     }
@@ -21,7 +22,7 @@ mod tests {
     use super::*;
     use crate::naive_list_set::NaiveListSet;
 
-    fn test_set_operations<S: ResourceSet<u32> + PartialEq + std::fmt::Debug>() {
+    fn test_set_operations<S: ResourceSet + PartialEq + std::fmt::Debug>() {
         let mut a = S::new();
         let mut b = S::new();
 
@@ -51,7 +52,8 @@ mod tests {
 
     #[test]
     fn test_implementation() {
-        test_set_operations::<NaiveListSet<u32>>();
-        test_set_operations::<hash_set_set::HashSetSet<u32>>();
+        test_set_operations::<NaiveListSet>();
+        test_set_operations::<hash_set_set::HashSetSet>();
+        test_set_operations::<interval_set::IntervalSet>();
     }
 }
