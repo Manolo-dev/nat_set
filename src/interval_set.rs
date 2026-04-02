@@ -160,4 +160,28 @@ impl ResourceSet for IntervalSet {
             .flat_map(|(start, end)| (*start..=*end-1).into_iter())
         )
     }
+
+    fn serialize(&self) -> String {
+        self.intervals()
+            .map(|(start, end)| if *start != *end - 1 { format!("{}-{}", *start, *end - 1) } else { format!("{}", *start) })
+            .collect::<Vec<_>>()
+            .join(" ")
+    }
+
+    fn deserialize(s: &str) -> Self {
+        let mut inner = BTreeSet::new();
+        for part in s.split_whitespace() {
+            if let Some((start, end)) = part.split_once('-') {
+                if let (Ok(s), Ok(e)) = (start.parse::<u32>(), end.parse::<u32>()) {
+                    inner.insert(s);
+                    inner.insert(e + 1);
+                }
+            } else if let Ok(e) = part.parse::<u32>() {
+                inner.insert(e);
+                inner.insert(e + 1);
+            }
+        }
+
+        IntervalSet { inner: inner.clone() }
+    }
 }

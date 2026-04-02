@@ -1,9 +1,3 @@
----
-geometry: "left=2cm,right=2cm,top=2cm,bottom=2cm"
-header-includes: |
-    \usepackage{stmaryrd}
----
-
 # CC1 -- Phase individuelle : méthode et planification
 
 ## Approche technique
@@ -16,7 +10,7 @@ header-includes: |
 
 - **Validation fonctionnelle.** Chaque implémentation sera soumise à une suite de tests unitaires partagée : propriétés algébriques (associativité, commutativité, lois de De Morgan, idempotence), cas limites (ensemble vide, singleton, ensemble plein, chevauchement d'intervalles). `proptest` sera utilisé pour le property-based testing.
 
-- **Évaluation des performances.** Benchmarks via `criterion.rs`. Paramètres variés : taille du domaine $n$ ($S \subseteq \llbracket 0, n - 1 \rrbracket$), densité $\delta = \frac{|S|}n$ et fragmentation $\phi = \frac{|\{i \in S | i - 1 \not\in S \}|}{|S|}$ de l'ensemble, taille des opérandes. La dé/sérialisation sera benchmarkée séparément. Les expériences tourneront en monocœur avec isolation CPU (`taskset`, fréquence fixée) pour la reproductibilité.
+- **Évaluation des performances.** Benchmarks via `criterion.rs`. Paramètres variés : taille du domaine $n$ ($S \subseteq [ 0, n - 1 ]$), densité $\delta = \frac{|S|}n$ et fragmentation $\phi = \frac{|\{i \in S | i - 1 \not\in S \}|}{|S|}$ de l'ensemble, taille des opérandes. La dé/sérialisation sera benchmarkée séparément. Les expériences tourneront en monocœur avec isolation CPU (`taskset`, fréquence fixée) pour la reproductibilité.
 
 - **Formation.** Deux blocs dédiés : S1 pour les fondamentaux Rust (*The Book*, `criterion.rs`, `proptest`) ; S5 pour l'unsafe Rust (*Rustonomicon*) si requis par des implémentations bas-niveau (SIMD éventuel).
 
