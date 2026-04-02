@@ -1,8 +1,18 @@
 use crate::ResourceSet;
 
-#[derive(Clone, PartialEq, Debug)]
+#[derive(Clone, Debug)]
 pub struct NaiveListSet {
     inner: Vec<u32>,
+}
+
+impl PartialEq for NaiveListSet {
+    fn eq(&self, other: &Self) -> bool {
+        let mut sorted_self = self.inner.clone();
+        let mut sorted_other = other.inner.clone();
+        sorted_self.sort();
+        sorted_other.sort();
+        sorted_self == sorted_other
+    }
 }
 
 impl ResourceSet for NaiveListSet {

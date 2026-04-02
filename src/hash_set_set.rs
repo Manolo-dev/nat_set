@@ -37,7 +37,7 @@ impl ResourceSet for HashSetSet {
 
     fn iter(&self) -> Box<dyn Iterator<Item = u32> + '_> {
         let mut sorted: Vec<u32> = self.inner.iter().cloned().collect();
-        sorted.sort();  // tri numérique
+        sorted.sort();
         Box::new(sorted.into_iter())
     }
 }
