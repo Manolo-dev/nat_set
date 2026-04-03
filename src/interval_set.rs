@@ -20,7 +20,6 @@ impl IntervalSet {
 }
 
 impl ResourceSet for IntervalSet {
-
     fn new() -> Self {
         IntervalSet { inner: BTreeSet::new() }
     }

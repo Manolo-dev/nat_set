@@ -1,6 +1,7 @@
 pub mod naive_list_set;
 pub mod hash_set_set;
 pub mod interval_set;
+pub mod bit_set_set;
 
 pub trait ResourceSet: Clone + PartialEq + std::fmt::Debug {
     fn new() -> Self;
@@ -156,4 +157,5 @@ mod tests {
     tests_for!(naive_list_set::NaiveListSet, naive_list_set);
     tests_for!(hash_set_set::HashSetSet    , hash_set_set);
     tests_for!(interval_set::IntervalSet   , interval_set);
+    tests_for!(bit_set_set::BitSetSet      , bit_set_set);
 }
