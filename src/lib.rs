@@ -152,7 +152,7 @@ mod tests {
         assert_eq!(serialized, "1-2 5 7-8");
         let deserialized = crate::interval_set::IntervalSet::deserialize(&serialized);
         assert_eq!(set, deserialized);
-    }    
+    }
 
     tests_for!(naive_list_set::NaiveListSet, naive_list_set);
     tests_for!(hash_set_set::HashSetSet    , hash_set_set);
