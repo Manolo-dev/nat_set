@@ -3,10 +3,10 @@ use std::collections::BTreeMap;
 
 #[derive(Clone, PartialEq, Debug)]
 pub struct SzemerSet {
-    inner: BTreeMap<(u32, Vec<(u32, u32)>)>, // (start, steps = [(modd, reste), ...])
+    inner: BTreeMap<u32, Vec<(u32, u32)>>, // (start, steps = [(modd, reste), ...])
     // Quand Vec<(u32, u32)> est vide, c'est un trou
     // Idée :
-    // E = ⋃(i ∈ {(0, 0)} ∪ inner \ last) {n ∈ [inner.i.0, inner.(i+1).0) : ∃ k ∈ inner.i.1 : k.left | n - k.right}
+    // E = ⋃_{s ∈ {0} ∪ keys(inner) \ {last}} { n ∈ [s, succ(s)) | ∃ (m, r) ∈ inner[s] : m ∣ (n − r) }
 }
 
 fn gcd(a: u64, b: u64) -> u64 {
@@ -147,20 +147,9 @@ impl ResourceSet for SzemerSet {
 
     fn serialize(&self) -> String {
         self.simple_intervals()
-            .map(|(start, modd, reste, end)| 
-                // if *steps != 0 {
-                //     format!("{}-{}:{}", *start, *end - 1, *steps)
-                // } else if *start != *end - 1 {
-                //     format!("{}-{}", *start, *end - 1)
-                // } else {
-                //     format!("{}", *start)
-                // })
-                if *modd != 0 {
-                    format!("{}-{}:{}", *start, *end - 1, *modd)
-                } else if *start != *end - 1 {
-                    format!("{}-{}", *start, *end - 1)
-                } else {
-                    format!("{}", *start)
+            .map(|(start, modd, reste, end)| {
+                
+            })
             .collect::<Vec<_>>()
             .join(" ")
     }

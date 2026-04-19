@@ -37,7 +37,20 @@ impl ResourceSet for IntervalSet {
         //* sinon :
         //*     c'est une fin d'interval et elem est contenu
         
-        self.inner.range(..=elem).count() % 2 == 1
+        let mut low = 0;
+        let mut high = self.inner.len();
+
+        while low < high {
+            let mid = (low + high) / 2;
+            let mid_val = *self.inner.iter().nth(mid).unwrap();
+            if mid_val <= elem {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        
+        low % 2 == 1
     }
 
     fn len(&self) -> usize {
