@@ -1,7 +1,7 @@
 pub mod naive_list_set;
 pub mod hash_set_set;
 pub mod interval_set;
-pub mod bit_set_set;
+pub mod roaring_set;
 
 pub trait ResourceSet: Clone + PartialEq + std::fmt::Debug {
     fn new() -> Self;
@@ -157,5 +157,77 @@ mod tests {
     tests_for!(naive_list_set::NaiveListSet, naive_list_set);
     tests_for!(hash_set_set::HashSetSet    , hash_set_set);
     tests_for!(interval_set::IntervalSet   , interval_set);
-    tests_for!(bit_set_set::BitSetSet      , bit_set_set);
+    tests_for!(roaring_set::RoaringSet     , roaring_set);
+}
+
+#[cfg(test)]
+mod proptests {
+    use proptest::prelude::*;
+    use crate::ResourceSet;
+
+    fn arbitrary_set<S: ResourceSet + 'static>() -> impl Strategy<Value = S> {
+        prop::collection::vec(0..1000u32, 0..100)
+            .prop_map(|v| S::from_iter(v))
+    }
+
+    macro_rules! proptest_for {
+        ($S:ty, $name:ident) => {
+            mod $name {
+                use super::*;
+                use crate::ResourceSet;
+
+                proptest! {
+                    #[test]
+                    fn union_commutative(a in arbitrary_set::<$S>(), b in arbitrary_set::<$S>()) {
+                        assert_eq!(a.union(&b), b.union(&a));
+                    }
+
+                    #[test]
+                    fn intersection_commutative(a in arbitrary_set::<$S>(), b in arbitrary_set::<$S>()) {
+                        assert_eq!(a.intersection(&b), b.intersection(&a));
+                    }
+
+                    #[test]
+                    fn union_associative(a in arbitrary_set::<$S>(), b in arbitrary_set::<$S>(), c in arbitrary_set::<$S>()) {
+                        assert_eq!(a.union(&b).union(&c), a.union(&b.union(&c)));
+                    }
+
+                    #[test]
+                    fn intersection_associative(a in arbitrary_set::<$S>(), b in arbitrary_set::<$S>(), c in arbitrary_set::<$S>()) {
+                        assert_eq!(a.intersection(&b).intersection(&c), a.intersection(&b.intersection(&c)));
+                    }
+
+                    #[test]
+                    fn distributivity(a in arbitrary_set::<$S>(), b in arbitrary_set::<$S>(), c in arbitrary_set::<$S>()) {
+                        let left = a.intersection(&b.union(&c));
+                        let right = a.intersection(&b).union(&a.intersection(&c));
+                        assert_eq!(left, right);
+                    }
+
+                    #[test]
+                    fn idempotence(a in arbitrary_set::<$S>()) {
+                        assert_eq!(a.union(&a), a);
+                        assert_eq!(a.intersection(&a), a);
+                    }
+
+                    #[test]
+                    fn difference_self(a in arbitrary_set::<$S>()) {
+                        assert_eq!(a.difference(&a), <$S>::new());
+                    }
+
+                    #[test]
+                    fn serialize_deserialize_roundtrip(a in arbitrary_set::<$S>()) {
+                        let s = a.serialize();
+                        let b = <$S>::deserialize(&s);
+                        assert_eq!(a, b);
+                    }
+                }
+            }
+        };
+    }
+
+    proptest_for!(crate::naive_list_set::NaiveListSet, naive_list_set_proptest);
+    proptest_for!(crate::hash_set_set::HashSetSet    , hash_set_set_proptest);
+    proptest_for!(crate::interval_set::IntervalSet   , interval_set_proptest);
+    proptest_for!(crate::roaring_set::RoaringSet     , roaring_set_proptest);
 }

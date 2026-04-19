@@ -31,26 +31,13 @@ impl ResourceSet for IntervalSet {
     fn contains(&self, elem: u32) -> bool {
         //* Stratégie
         //* —————————
-        //* recherche dichotomique pour l'interval [a, b) tel que elem in [a, b)
+        //* recherche pour l'interval [a, b) tel que elem in [a, b)
         //* si l'index de a est pair :
         //*     c'est un début d'interval et elem n'est pas contenu
         //* sinon :
         //*     c'est une fin d'interval et elem est contenu
         
-        let mut low = 0;
-        let mut high = self.inner.len();
-
-        while low < high {
-            let mid = (low + high) / 2;
-            let mid_val = *self.inner.iter().nth(mid).unwrap();
-            if mid_val <= elem {
-                low = mid + 1;
-            } else {
-                high = mid;
-            }
-        }
-        
-        low % 2 == 1
+        self.inner.range(..=elem).count() % 2 == 1
     }
 
     fn len(&self) -> usize {
@@ -162,7 +149,12 @@ impl ResourceSet for IntervalSet {
 
     fn serialize(&self) -> String {
         self.intervals()
-            .map(|(start, end)| if *start != *end - 1 { format!("{}-{}", *start, *end - 1) } else { format!("{}", *start) })
+            .map(|(start, end)|
+                if *start != *end - 1 {
+                    format!("{}-{}", *start, *end - 1)
+                } else {
+                    format!("{}", *start)
+                })
             .collect::<Vec<_>>()
             .join(" ")
     }

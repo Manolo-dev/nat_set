@@ -24,6 +24,16 @@ impl ResourceSet for NaiveListSet {
         NaiveListSet { inner: vec![e] }
     }
 
+    fn from_iter<I: IntoIterator<Item = u32>>(iter: I) -> Self {
+        let mut set = Self::new();
+        for e in iter {
+            if !set.contains(e) {
+                set.inner.push(e);
+            }
+        }
+        set
+    }
+
     fn contains(&self, elem: u32) -> bool {
         self.inner.contains(&elem)
     }

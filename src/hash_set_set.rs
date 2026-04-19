@@ -15,6 +15,10 @@ impl ResourceSet for HashSetSet {
         HashSetSet { inner: HashSet::from([e]) }
     }
 
+    fn from_iter<I: IntoIterator<Item = u32>>(iter: I) -> Self {
+        HashSetSet { inner: iter.into_iter().collect() }
+    }
+
     fn contains(&self, elem: u32) -> bool {
         self.inner.contains(&elem)
     }

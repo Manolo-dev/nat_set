@@ -2,19 +2,19 @@ use crate::ResourceSet;
 use roaring::RoaringBitmap;
 
 #[derive(Clone, PartialEq, Debug)]
-pub struct BitSetSet {
+pub struct RoaringSet {
     inner: RoaringBitmap,
 }
 
-impl ResourceSet for BitSetSet {
+impl ResourceSet for RoaringSet {
     fn new() -> Self {
-        BitSetSet { inner: RoaringBitmap::new() }
+        RoaringSet { inner: RoaringBitmap::new() }
     }
 
     fn singleton(e: u32) -> Self {
         let mut bitmap = RoaringBitmap::new();
         bitmap.insert(e);
-        BitSetSet { inner: bitmap }
+        RoaringSet { inner: bitmap }
     }
 
     fn contains(&self, elem: u32) -> bool {
@@ -26,15 +26,15 @@ impl ResourceSet for BitSetSet {
     }
 
     fn union(&self, other: &Self) -> Self {
-        BitSetSet { inner: &self.inner | &other.inner }
+        RoaringSet { inner: &self.inner | &other.inner }
     }
 
     fn intersection(&self, other: &Self) -> Self {
-        BitSetSet { inner: &self.inner & &other.inner }
+        RoaringSet { inner: &self.inner & &other.inner }
     }
 
     fn difference(&self, other: &Self) -> Self {
-        BitSetSet { inner: &self.inner - &other.inner }
+        RoaringSet { inner: &self.inner - &other.inner }
     }
 
     fn iter(&self) -> Box<dyn Iterator<Item = u32> + '_> {

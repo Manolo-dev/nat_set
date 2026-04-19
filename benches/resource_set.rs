@@ -3,7 +3,7 @@ use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criteri
 use nat_set::ResourceSet;
 use nat_set::hash_set_set::HashSetSet;
 use nat_set::interval_set::IntervalSet;
-use nat_set::bit_set_set::BitSetSet;
+use nat_set::roaring_set::RoaringSet;
 
 // Données de test réutilisables
 fn  small() -> Vec<u32> { (0..10).collect() }
@@ -54,7 +54,7 @@ fn bench_impl<S: ResourceSet>(c: &mut Criterion, group_name: &str) {
 fn benchmarks(c: &mut Criterion) {
     bench_impl::<HashSetSet>  (c, "HashSetSet"  );
     bench_impl::<IntervalSet> (c, "IntervalSet" );
-    bench_impl::<BitSetSet>   (c, "BitSetSet"   );
+    bench_impl::<RoaringSet>  (c, "RoaringSet"  );
 }
 
 criterion_group!(benches, benchmarks);
